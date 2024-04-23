@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  #root {
+    height: 100%;
+  }
+}
+
+.container {
+  @apply max-w-[1280px] w-full mx-auto px-5;
+}
