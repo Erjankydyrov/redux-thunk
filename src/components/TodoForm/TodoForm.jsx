@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addTodo } from "../../store/slices/todoSlice";
-import axios from "axios";
+import { addNewTodo } from "../../store/slices/todoSlice";
 
 const TodoForm = () => {
   const [message, setMessage] = useState("");
@@ -10,17 +9,8 @@ const TodoForm = () => {
 
   const handleAdd = () => {
     if (message.length > 3) {
-      const data = {
-        title: message,
-        completed: false,
-      };
-      axios
-        .post("http://localhost:3001/todos", data)
-        .then((responce) => {
-          dispatch(addTodo(responce.data));
-          setMessage("");
-        })
-        .catch((error) => console.error(error));
+      dispatch(addNewTodo(message));
+      setMessage("")
     } else {
       return;
     }

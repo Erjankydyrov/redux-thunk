@@ -1,7 +1,23 @@
+import { useSelector } from 'react-redux';
 import TodoForm from "../components/TodoForm/TodoForm";
 import TodoList from "../components/TodoList/TodoList";
+import { useEffect, useState } from 'react';
 
 const Home = () => {
+  const { status, error } = useSelector((state) => state.todos);
+  const [loadingTimeout, setLoadingTimeout] = useState(null);
+
+  useEffect(() => {
+    if (status === "loading") {
+      const timeoutId = setTimeout(() => {
+        setLoadingTimeout(null);
+      }, 1000);
+      setLoadingTimeout(timeoutId);
+    }
+  }, [status]);
+
+  const isLoading = status === "loading" || loadingTimeout !== null;
+
   return (
     <div>
       <div className="container">
@@ -12,7 +28,8 @@ const Home = () => {
           <div className="flex justify-center items-center mb-5">
             <TodoForm />
           </div>
-          <TodoList />
+          {error && <h2>An error occurred: {error}</h2>}
+          {isLoading ? <h2>Loading...</h2> : <TodoList />}
         </div>
       </div>
     </div>
