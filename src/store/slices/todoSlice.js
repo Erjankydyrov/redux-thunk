@@ -41,6 +41,47 @@ export const addNewTodo = createAsyncThunk(
   }
 );
 
+export const deleteTodo = createAsyncThunk(
+  "todos/deleteTodo",
+  async (id, { rejectWithValue, dispatch }) => {
+    try {
+      await axios
+        .delete(`http://localhost:3001/todos/${id}`)
+        .then(() => {
+          dispatch(removeTodo({ id }));
+        })
+        .catch(() => {
+          throw new Error("Can't delete todo. Server error.");
+        });
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const completedTodo = createAsyncThunk(
+  "todos/completedTodo",
+  async (id, { rejectWithValue, dispatch, getState }) => {
+    try {
+      const todo = getState().todos.todos.find((todo) => todo.id === id);
+      const newData = {
+        ...todo,
+        completed: !todo.completed,
+      };
+      await axios
+        .patch(`http://localhost:3001/todos/${id}`, newData)
+        .then(() => {
+          dispatch(toggleTodoComplete({ id }));
+        })
+        .catch(() => {
+          throw new Error("Can't toggle todo completed. Server error.");
+        });
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
 const todoSlice = createSlice({
   name: "todos",
   initialState: {
@@ -76,6 +117,14 @@ const todoSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(addNewTodo.rejected, (state, action) => {
+        state.status = "error";
+        state.error = action.payload;
+      })
+      .addCase(deleteTodo.rejected, (state, action) => {
+        state.status = "error";
+        state.error = action.payload;
+      })
+      .addCase(completedTodo.rejected, (state, action) => {
         state.status = "error";
         state.error = action.payload;
       });

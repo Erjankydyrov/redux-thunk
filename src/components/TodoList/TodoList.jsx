@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import { removeTodo, toggleTodoComplete } from "../../store/slices/todoSlice";
+import { completedTodo, deleteTodo } from "../../store/slices/todoSlice";
 import { RxCross2 } from "react-icons/rx";
-import axios from "axios";
 
 const TodoList = () => {
   const todos = useSelector((state) => state.todos.todos);
@@ -9,26 +8,11 @@ const TodoList = () => {
   const dispatch = useDispatch();
 
   const handleRemove = (id) => {
-    axios
-      .delete(`http://localhost:3001/todos/${id}`)
-      .then(() => {
-        dispatch(removeTodo({ id }));
-      })
-      .catch((error) => console.error(error));
+    dispatch(deleteTodo(id))
   };
 
   const handleCompleted = (id) => {
-    const todo = todos.find((todo) => todo.id === id);
-    const newData = {
-      ...todo,
-      completed: !todo.completed,
-    };
-    axios
-      .patch(`http://localhost:3001/todos/${id}`, newData)
-      .then(() => {
-        dispatch(toggleTodoComplete({ id }));
-      })
-      .catch((error) => console.error(error));
+    dispatch(completedTodo(id))
   };
 
   return (
